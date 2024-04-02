@@ -5,10 +5,11 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class StudyTest {
 
     @Test
-    @DisplayName("test")
+    @DisplayName("스터디 만들기 \uD83D\uDE00")
     public void test() {
         Study study = new Study();
         assertNotNull(study);
@@ -17,7 +18,7 @@ public class StudyTest {
 
     @Disabled
     @Test
-    @DisplayName("test2")
+    @DisplayName("스터디 만들기 \uD83D\uDE2A") // 이모지 사용 가능
     public void test2() {
         System.out.println("not test");
     }
