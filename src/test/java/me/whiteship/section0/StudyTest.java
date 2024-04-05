@@ -3,6 +3,8 @@ package me.whiteship.section0;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -11,7 +13,7 @@ public class StudyTest {
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE00")
     public void test() {
-        Study study = new Study(-10);
+        Study study = new Study(10);
         assertNotNull(study);
 
         /* assertEquals */
@@ -25,7 +27,19 @@ public class StudyTest {
                 () -> assertTrue(study.getLimit() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 한다.")
         );
 
+        /* assertThrows */
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Study(-10));
+
+        /* assertTimeout */
+        assertTimeout(Duration.ofMillis(100), () -> {
+            new Study(10);
+            Thread.sleep(300);
+        });
+
+        // assertTimeoutPreemptively 는 Thread 때문에 주의하여 사용해야함
+
         System.out.println("create");
+
     }
 
     @Disabled
