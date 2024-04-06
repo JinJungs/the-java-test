@@ -2,10 +2,14 @@ package me.whiteship.section0;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.time.Duration;
 
+import static org.junit.Assume.assumeThat;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class StudyTest {
@@ -47,6 +51,24 @@ public class StudyTest {
     @DisplayName("스터디 만들기 \uD83D\uDE2A") // 이모지 사용 가능
     public void test2() {
         System.out.println("not test");
+    }
+
+    @Test
+    @EnabledOnOs({OS.MAC, OS.LINUX})
+    @EnabledOnJre({JRE.JAVA_16})
+    @DisabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
+    @DisplayName("조건에 따라 테스트 실행하기")
+    public void test3() {
+        String env = System.getenv("TEST_ENV");
+        System.out.println(env);
+
+        /* assumeTrue - 참이어야 테스트 실행 */
+        assumeTrue("LOCAL".equalsIgnoreCase(env));
+
+        /* assumingThat */
+        assumingThat("LOCAL".equalsIgnoreCase(env), () -> {
+            System.out.println("test");
+        });
     }
 
     @BeforeAll
