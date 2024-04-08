@@ -72,13 +72,12 @@ public class StudyTest {
     }
 
     @Test
-    @Tag("fast")
+    @FastTest
     public void test4() {
         System.out.println("로컬에서 실행됨");
     }
 
-    @Test
-    @Tag("slow")
+    @SlowTest
     public void test5() {
         System.out.println("CI환경에서 에서 실행됨"); // ./mvnw test -P ci   로 실행
     }
