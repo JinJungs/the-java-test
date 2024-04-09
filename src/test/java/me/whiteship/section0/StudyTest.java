@@ -3,6 +3,8 @@ package me.whiteship.section0;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
 
@@ -16,7 +18,7 @@ public class StudyTest {
 
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE00")
-    public void test() {
+    void test() {
         Study study = new Study(10);
         assertNotNull(study);
 
@@ -49,7 +51,7 @@ public class StudyTest {
     @Disabled
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE2A") // 이모지 사용 가능
-    public void test2() {
+    void test2() {
         System.out.println("not test");
     }
 
@@ -58,7 +60,7 @@ public class StudyTest {
     @EnabledOnJre({JRE.JAVA_16})
     @DisabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
     @DisplayName("조건에 따라 테스트 실행하기")
-    public void test3() {
+    void test3() {
         String env = System.getenv("TEST_ENV");
         System.out.println(env);
 
@@ -73,13 +75,26 @@ public class StudyTest {
 
     @Test
     @FastTest
-    public void test4() {
+    void test4() {
         System.out.println("로컬에서 실행됨");
     }
 
     @SlowTest
-    public void test5() {
+    void test5() {
         System.out.println("CI환경에서 에서 실행됨"); // ./mvnw test -P ci   로 실행
+    }
+
+    @DisplayName("반복 테스트 만들기")
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
+    void repeatedTest(RepetitionInfo repetitionInfo) {
+        System.out.println("repeated test " + repetitionInfo.getCurrentRepetition());
+    }
+
+    @DisplayName("스터디 만들기")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @ValueSource(strings = {"날씨가", "많이", "추워지고", "있습니다"})
+    void parameterizedTest(String message){
+        System.out.println(message);
     }
 
     @BeforeAll
