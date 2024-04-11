@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 이걸 쓰면 테스트 인스턴스를 1개만 만들기 때문에 beforeAll과 afterAll이 static일 필요가 없음
 public class StudyTest {
 
     @Test
@@ -140,6 +141,20 @@ public class StudyTest {
             assertEquals(Study.class, targetType, "Can only convert to study");
             return new Study(Integer.parseInt(source.toString()));
         }
+    }
+
+    int value = 1;
+
+    @DisplayName("value ++ 테스트 1")
+    @Test
+    void testValue() {
+        System.out.println("value++ = " + value++);
+    }
+
+    @DisplayName("value ++ 테스트 2")
+    @Test
+    void testValue2() {
+        System.out.println("value++ = " + value++);
     }
 
 
