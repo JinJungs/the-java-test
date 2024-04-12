@@ -23,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 이걸 쓰면 테스트 인스턴스를 1개만 만들기 때문에 beforeAll과 afterAll이 static일 필요가 없음
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 이걸 쓰면 테스트 인스턴스를 1개만 만들기 때문에 beforeAll과 afterAll이 static일 필요가 없음 - 대신 value도 + 1 됨, 순서가 필요한 경우는 유용할 수도 있다.
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudyTest {
 
     @Test
@@ -85,22 +86,26 @@ public class StudyTest {
 
     @Test
     @FastTest
+    @Order(1)
     void test4() {
         System.out.println("로컬에서 실행됨");
     }
 
     @SlowTest
+    @Order(2)
     void test5() {
         System.out.println("CI환경에서 에서 실행됨"); // ./mvnw test -P ci   로 실행
     }
 
     @DisplayName("반복 테스트 만들기")
+    @Order(3)
     @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
     void repeatedTest(RepetitionInfo repetitionInfo) {
         System.out.println("repeated test " + repetitionInfo.getCurrentRepetition());
     }
 
     @DisplayName("테스트 반복하기 - 1")
+    @Order(4)
     @ParameterizedTest(name = "{index} {displayName} message={0}")
     @ValueSource(strings = {"날씨가", "많이", "추워지고", "있습니다"})
 //    @EmptySource
@@ -111,6 +116,7 @@ public class StudyTest {
     }
 
     @DisplayName("테스트 반복하기 - 2")
+    @Order(5)
     @ParameterizedTest(name = "{index} {displayName} study={0}")
      @ValueSource(ints = {10,20,40})
     void parameterizedTest2(@ConvertWith(StudyConverter.class) Study study){ // Integer로 받아도 되지만, 특정 클래스로 받고 싶다면 SimpleArgumentConverter 를 상속한 Converter를 추가해줘야한다.
