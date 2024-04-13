@@ -29,7 +29,7 @@ public class StudyTest {
 
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE00")
-    void test() {
+    void create_new_study() {
         Study study = new Study(10);
         assertNotNull(study);
 
