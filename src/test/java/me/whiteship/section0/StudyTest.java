@@ -1,9 +1,9 @@
 package me.whiteship.section0;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -12,12 +12,12 @@ import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.converter.SimpleArgumentConverter;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
-import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
@@ -25,7 +25,17 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // 이걸 쓰면 테스트 인스턴스를 1개만 만들기 때문에 beforeAll과 afterAll이 static일 필요가 없음 - 대신 value도 + 1 됨, 순서가 필요한 경우는 유용할 수도 있다.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+// @ExtendWith(FindSlowTestExtension.class) // 선언적 등록 - 어노테이션으로 선언하면 THRESHOLD 값을 생성자로 주입할 수가 없다.
 public class StudyTest {
+
+    @RegisterExtension
+    static FindSlowTestExtension findSlowTestExtension = new FindSlowTestExtension(1000L); // 프로그래밍적 등록 - THRESHOLD 값을 생성자로 주입할 수 있다.
+
+    @Test
+    @DisplayName("extension test - 1초이상 수행시 slowTest 어노테이션을 붙이라는 메세지가 출력된다.")
+    void extensionTest() throws InterruptedException {
+        Thread.sleep(1005L);
+    }
 
     @Test
     @DisplayName("스터디 만들기 \uD83D\uDE00")
