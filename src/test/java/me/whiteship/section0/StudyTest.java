@@ -78,7 +78,7 @@ public class StudyTest {
 
     @Test
     @EnabledOnOs({OS.MAC, OS.LINUX})
-    @EnabledOnJre({JRE.JAVA_16})
+    @EnabledOnJre({JRE.JAVA_11})
     @DisabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
     @DisplayName("조건에 따라 테스트 실행하기")
     void test3() {
