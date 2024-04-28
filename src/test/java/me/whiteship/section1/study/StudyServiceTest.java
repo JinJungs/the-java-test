@@ -1,14 +1,18 @@
 package me.whiteship.section1.study;
 
 
+import me.whiteship.section1.domain.Member;
+import me.whiteship.section1.domain.Study;
 import me.whiteship.section1.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /* 어노테이션을 사용한다면 반드시 ExtendWith로 Mockito를 추가해야함. */
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +35,39 @@ class StudyServiceTest {
         StudyService studyService = new StudyService(memberService, studyRepository);
 
         assertNotNull(studyService);
+    }
+
+    @Test
+    void test2(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("justice@gmail.com");
+
+        /* Stubbing */
+        /* do는 매개변수가 없는 메서드 */
+        doThrow(new IllegalArgumentException()).when(memberService).validate(2L);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+           memberService.validate(2L);
+        });
+
+        /* when 은 매개변수가 있는 메서드 */
+        /* 메소드가 동일한 매개변수로 여러번 호출될 때 각기 다르게 행동호도록 조작할 수도 있다.*/
+        when(memberService.findById(any()))
+                .thenReturn(Optional.of(member))
+                .thenThrow(new RuntimeException())
+                .thenReturn(Optional.empty());
+
+        Optional<Member> findById = memberService.findById(1L);
+        assertEquals("justice@gmail.com", findById.get().getEmail());
+
+        assertThrows(RuntimeException.class, () -> {
+            Optional<Member> findById2 = memberService.findById(1L);
+        });
+
+        Optional<Member> findById3 = memberService.findById(1L);
+        assertEquals(Optional.empty(), findById3);
+
     }
 
 }
