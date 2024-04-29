@@ -6,8 +6,10 @@ import me.whiteship.section1.domain.Study;
 import me.whiteship.section1.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xmlunit.input.WhitespaceNormalizedSource;
 
 import java.util.Optional;
 
@@ -67,6 +69,40 @@ class StudyServiceTest {
 
         Optional<Member> findById3 = memberService.findById(1L);
         assertEquals(Optional.empty(), findById3);
+
+    }
+
+    @Test
+    void test3(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("justice@gmail.com");
+
+        Study study = new Study(10, "테스트");
+
+        /* quiz */
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        studyService.createNewStudy(1L, study);
+
+        assertEquals(member, study.getOwner());
+
+        /* 결과를 확인할 수 없는경우, 호출 횟수 등을 체크할 수 있다. */
+        verify(memberService, times(1)).notify(study);
+        verify(memberService, times(1)).notify(member);
+        verify(memberService, never()).validate(any());
+
+        /* 호출 순서 확인 */
+        InOrder inOrder = inOrder(memberService);
+        inOrder.verify(memberService).notify(study);
+        inOrder.verify(memberService).notify(member);
+
+        /* 더 이상 호출하지 않는다. */
+        verifyNoMoreInteractions(memberService);
 
     }
 
