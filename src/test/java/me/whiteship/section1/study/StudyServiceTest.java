@@ -14,6 +14,8 @@ import org.xmlunit.input.WhitespaceNormalizedSource;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 /* 어노테이션을 사용한다면 반드시 ExtendWith로 Mockito를 추가해야함. */
@@ -74,6 +76,7 @@ class StudyServiceTest {
 
     @Test
     void test3(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
+        // given
         StudyService studyService = new StudyService(memberService, studyRepository);
         assertNotNull(studyService);
 
@@ -87,14 +90,23 @@ class StudyServiceTest {
         when(memberService.findById(1L)).thenReturn(Optional.of(member));
         when(studyRepository.save(study)).thenReturn(study);
 
+        /* [BDD] given에 해당하는 부분인데 when을 사용해서 어색해보인다 -> given으로 변경할 수 있음 */
+        given(memberService.findById(1L)).willReturn(Optional.of(member));
+        given(studyRepository.save(study)).willReturn(study);
+
+        // when
         studyService.createNewStudy(1L, study);
 
+        // then
         assertEquals(member, study.getOwner());
 
         /* 결과를 확인할 수 없는경우, 호출 횟수 등을 체크할 수 있다. */
         verify(memberService, times(1)).notify(study);
         verify(memberService, times(1)).notify(member);
         verify(memberService, never()).validate(any());
+
+        /* [BDD] 이것도 마찬가지로 then에 해당하므로 verify 대신 then을 사용할 수 있다. */
+        then(memberService).should(times(1)).notify(study);
 
         /* 호출 순서 확인 */
         InOrder inOrder = inOrder(memberService);
@@ -103,7 +115,8 @@ class StudyServiceTest {
 
         /* 더 이상 호출하지 않는다. */
         verifyNoMoreInteractions(memberService);
-
+        /* [BDD] */
+        then(memberService).shouldHaveNoInteractions();
     }
 
 }
