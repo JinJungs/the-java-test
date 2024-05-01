@@ -2,6 +2,8 @@ package me.whiteship.section1.domain;
 
 import me.whiteship.section0.StudyStatus;
 
+import java.time.LocalDateTime;
+
 public class Study {
 
     private StudyStatus status = StudyStatus.DRAFT;
@@ -9,6 +11,8 @@ public class Study {
     private Member owner;
 
     private String name;
+
+    private LocalDateTime openedDateTime;
 
     public Study(int limit, String name) {
         this.limit = limit;
@@ -42,6 +46,12 @@ public class Study {
         return owner;
     }
 
+    public LocalDateTime getOpenedDateTime() {
+        return openedDateTime;
+    }
+
+
+
     @Override
     public String toString() {
         return "Study{" +
@@ -49,5 +59,10 @@ public class Study {
                 ", limit=" + limit +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public void open() {
+        this.openedDateTime = LocalDateTime.now();
+        this.status = StudyStatus.OPENED;
     }
 }

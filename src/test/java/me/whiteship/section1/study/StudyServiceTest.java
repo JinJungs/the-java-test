@@ -4,6 +4,7 @@ package me.whiteship.section1.study;
 import me.whiteship.section1.domain.Member;
 import me.whiteship.section1.domain.Study;
 import me.whiteship.section1.member.MemberService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -13,6 +14,7 @@ import org.xmlunit.input.WhitespaceNormalizedSource;
 
 import java.util.Optional;
 
+import static me.whiteship.section0.StudyStatus.OPENED;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -118,5 +120,29 @@ class StudyServiceTest {
         /* [BDD] */
         then(memberService).shouldHaveNoInteractions();
     }
+
+    @DisplayName("다른 사용자가 볼 수 있도록 스터디를 공개한다.")
+    @Test
+    void openStudy(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        Study study = new Study(10, "더 자바, 테스트");
+        // TODO studyRepository Mock 객체의 save 메소드를호출 시 study를 리턴하도록 만들기.
+        given(studyRepository.save(study)).willReturn(study);
+
+        // When
+        studyService.openStudy(study);
+
+        // Then
+        // TODO study의 status가 OPENED로 변경됐는지 확인
+        // then(study.getStatus()).should().equals(OPENED);
+        assertEquals(study.getStatus(), OPENED);
+        // TODO study의 openedDataTime이 null이 아닌지 확인
+        // then(study.getOpenedDateTime()).should().equals(notNull());
+        assertNotNull(study.getOpenedDateTime());
+        // TODO memberService의 notify(study)가 호출 됐는지 확인.
+        then(memberService).should().notify(study);
+    }
+
 
 }
